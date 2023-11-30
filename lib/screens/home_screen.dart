@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skill_swap/profile/screens/user_profile_screen.dart';
+import 'package:skill_swap/skills/select_skill_mode.dart';
 import 'package:skill_swap/skills/skilled_in.dart';
 import '../api/apis.dart';
 import '../location/user_location.dart';
@@ -39,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           MaterialButton(
             onPressed: (){
-              Navigator.pushNamed(context, SkilledInScreen.id);
+              Navigator.pushNamed(context, SkillMode.id);
             },
             child: Text(
               "SKILLS",
@@ -50,25 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pushNamed(context, Location.id);
             },
             child: Text(
-              "LEARN",
+              "SWAP",
             ),
           ),
-          MaterialButton(
-            onPressed: (){
-              Navigator.pushNamed(context, UserProfile.id);
-            },
-            child: Text(
-              "TEACH",
-            ),
-          ),
-          MaterialButton(
-            onPressed: (){
-              Navigator.pushNamed(context, UserProfile.id);
-            },
-            child: Text(
-              "EXCHANGE",
-            ),
-          ),
+
           MaterialButton(
             onPressed: (){
               Navigator.pushNamed(context, Demo.id);

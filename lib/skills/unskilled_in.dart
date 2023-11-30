@@ -6,74 +6,32 @@ import '../database/database_methods.dart';
 
 var userId = DatabaseMethods.userId;
 
-class SkilledInScreen extends StatefulWidget {
-  static String id = 'skilled_in_screen';
+class UnskilledInScreen extends StatefulWidget {
+  static String id = 'unskilled_in_screen';
 
-  const SkilledInScreen({Key? key}) : super(key: key);
+  const UnskilledInScreen({Key? key}) : super(key: key);
 
   @override
-  State<SkilledInScreen> createState() => _SkilledInScreenState();
+  State<UnskilledInScreen> createState() => _UnskilledInScreenState();
 }
 
-class _SkilledInScreenState extends State<SkilledInScreen> {
+class _UnskilledInScreenState extends State<UnskilledInScreen> {
   late Map<String, List<Map<String, dynamic>>> skillsByCategory;
-  late Map<String, List<Map<String, dynamic>>> interestedInSkills;
 
   @override
   void initState() {
     super.initState();
     DatabaseMethods().getUId();
     skillsByCategory = {};
-    interestedInSkills = {};
     loadSkillsFromFirestore();
-    //loadInterestedInSkills();
   }
-
-
-  bool isSkillAlreadySelected(String skillName, Map<String, Set<String>> otherCategorySkills) {
-    for (var categorySkills in otherCategorySkills.values) {
-      if (categorySkills.contains(skillName)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-
-
-  Future<void> loadInterestedInSkills() async {
-    Map<String, Set<String>> tempInterestedInSkills = {};
-
-    try {
-      final userRef = FirebaseFirestore.instance.collection("user_info").doc(userId);
-      final interestedInSnapshot = await userRef.collection("unskilled_in").get();
-
-      for (var categoryDoc in interestedInSnapshot.docs) {
-        final categoryName = categoryDoc.id;
-        final subSkillsSnapshot = await categoryDoc.reference.collection("sub_skills").get();
-
-        tempInterestedInSkills[categoryName] = Set.from(
-          subSkillsSnapshot.docs.map((doc) => doc.data()["name"]),
-        );
-      }
-
-      setState(() {
-        interestedInSkills = tempInterestedInSkills.cast<String, List<Map<String, dynamic>>>();
-      });
-    } catch (e) {
-      print('Error loading interested in skills: $e');
-    }
-  }
-
-
-
 
   Future<Map<String, Set<String>>> loadSelectedSkills() async {
     Map<String, Set<String>> selectedSkills = {};
 
     try {
       final userRef = FirebaseFirestore.instance.collection("user_info").doc(userId);
-      final skilledInSnapshot = await userRef.collection("skilled_in").get();
+      final skilledInSnapshot = await userRef.collection("unskilled_in").get();
 
       for (var categoryDoc in skilledInSnapshot.docs) {
         final categoryName = categoryDoc.id;
@@ -135,10 +93,10 @@ class _SkilledInScreenState extends State<SkilledInScreen> {
       for (var category in skillsByCategory.keys) {
         for (var skill in skillsByCategory[category]!) {
           if (skill["isChecked"]) {
-            await userRef.collection("skilled_in").doc(category).set({
+            await userRef.collection("unskilled_in").doc(category).set({
               'name': category,
             });
-            await userRef.collection("skilled_in").doc(category).collection("sub_skills").doc(skill["name"]).set({
+            await userRef.collection("unskilled_in").doc(category).collection("sub_skills").doc(skill["name"]).set({
               'name': skill["name"],
             });
           }
@@ -158,7 +116,7 @@ class _SkilledInScreenState extends State<SkilledInScreen> {
       length: categories.length,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Skilled In'),
+          title: const Text('Interested In'),
           centerTitle: true,
           bottom: TabBar(
             isScrollable: true,
@@ -174,27 +132,20 @@ class _SkilledInScreenState extends State<SkilledInScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Please Choose the ones you are skilled in:",
+                      "Please Choose the ones you are interested in:",
                       style: TextStyle(fontSize: 16),
                     ),
                     SizedBox(height: 10),
                     Divider(),
                     ...skillsByCategory[category]!.map((skill) {
-                      bool isInInterestedList = isSkillAlreadySelected(skill["name"], interestedInSkills.cast<String, Set<String>>());
-                      print(isInInterestedList.toString());
-                     // print(skill);
                       return CheckboxListTile(
                         title: Text(skill["name"]),
                         value: skill["isChecked"],
                         onChanged: (bool? value) {
-                          
                           setState(() {
                             skill["isChecked"] = value ?? false;
                           });
                         },
-
-                        activeColor: isInInterestedList ? Colors.red : null,  // Apply red color if in "Interested In" list
-                        checkColor: isInInterestedList ? Colors.white : null, // Ensure the check mark is visible on red background
                       );
                     }).toList(),
                     SizedBox(height: 20),

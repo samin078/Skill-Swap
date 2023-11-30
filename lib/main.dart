@@ -5,7 +5,9 @@ import 'package:skill_swap/profile/screens/user_profile_screen.dart';
 import 'package:skill_swap/screens/home_screen.dart';
 import 'package:skill_swap/screens/splash_screen.dart';
 import 'package:skill_swap/screens/welcome_screen.dart';
+import 'package:skill_swap/skills/select_skill_mode.dart';
 import 'package:skill_swap/skills/skilled_in.dart';
+import 'package:skill_swap/skills/unskilled_in.dart';
 import 'auth/screen/login_screen.dart';
 import 'auth/screen/register_screen.dart';
 import 'firebase_options.dart';
@@ -36,8 +38,10 @@ class MyApp extends StatelessWidget {
         LoginScreen.id: (context) => LoginScreen(),
         RegisterScreen.id: (context) => RegisterScreen(),
         HomeScreen.id: (context) => HomeScreen(),
+        SkillMode.id: (context) => SkillMode(),
         SkilledInScreen.id: (context) => SkilledInScreen(),
-      //  UserProfile.id: (context) => UserProfile(,),
+        UnskilledInScreen.id: (context) => UnskilledInScreen(),
+        //  UserProfile.id: (context) => UserProfile(,),
         Location.id: (context) => Location(),
         Demo.id: (context) => Demo(),
       },

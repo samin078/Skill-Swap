@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../components/my_slider.dart';
 import '../database/database_methods.dart';
+import '../swap_mode/MatchedScreen.dart';
 
 
 var userId = DatabaseMethods.userId;
@@ -28,6 +29,7 @@ class _LocationState extends State<Location> {
   late MapController mapController;
   late List<Marker> markers;
   double selectedRadius = 500;
+  String selectedOption = "";
 
   @override
   void initState() {
@@ -36,6 +38,7 @@ class _LocationState extends State<Location> {
 
     });
     super.initState();
+    DatabaseMethods().getUId();
     mapController = MapController();
     markers = [];
   }
@@ -48,35 +51,104 @@ class _LocationState extends State<Location> {
       //   title: Text("Map"),
       //   centerTitle: true,
       // ),
-      body: Center(
-        child: Column(
-          children: [
-            Text(locationMessage),
-            const SizedBox(
-              height: 30.0,
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                _getCurrentLocation().then((value) {
-                  lat = value.latitude;
-                  long = value.longitude;
-                  setState(() {
-                    locationMessage = 'Latitude: $lat, Longitude: $long';
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              Text(locationMessage),
+              const SizedBox(
+                height: 30.0,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  _getCurrentLocation().then((value) {
                     lat = value.latitude;
                     long = value.longitude;
+                    setState(() {
+                      locationMessage = 'Latitude: $lat, Longitude: $long';
+                      lat = value.latitude;
+                      long = value.longitude;
+                    });
+                    DatabaseMethods().addUserLocation(userId!, lat, long); // Add the location to Firestore
+                    _liveLocation();
                   });
-                 // DatabaseMethods().addUserLocation(userId!, lat, long); // Add the location to Firestore
-                  _liveLocation();
-                });
-              },
-              child: Text('Get Current Location'),
-            ),
-            MySlider(
-                onSliderChanged: (double value) {
-                  selectedRadius = value;
-                 // print(value);
-                  print(selectedRadius);
-                  setState(() {
+                },
+                child: Text('Get Current Location'),
+              ),
+              MySlider(
+                  onSliderChanged: (double value) {
+                    selectedRadius = value;
+                   // print(value);
+                    print(selectedRadius);
+                    setState(() {
+                      CircleLayer(
+                        circles: [
+                          CircleMarker(
+                            point: LatLng(lat, long),
+                            radius: selectedRadius,
+                            useRadiusInMeter: true,
+                            color: Colors.lightBlueAccent.withOpacity(0.3),
+                            borderColor: Colors.blue.withOpacity(0.65),
+                            borderStrokeWidth: 1.5,
+                          ),
+                        ],
+                      );
+                    });
+                  }
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              // ElevatedButton(
+              //   onPressed: () async {
+              //     _getCurrentLocation().then((value) {
+              //       lat = value.latitude;
+              //       long = value.longitude;
+              //       setState(() {
+              //         locationMessage = 'Latitude: $lat , Longitude: $long';
+              //       });
+              //       _liveLocation();
+              //       _openMap(lat.toString(), long.toString());
+              //     }
+              //     );
+              //   },
+              //   child: const Text('Open Map'),
+              // ),
+              Container(
+                height: 500,
+                color: Colors.black,
+                child:  FlutterMap(
+                  mapController: mapController,
+                  options: MapOptions(
+                    initialCenter: LatLng(lat, long),
+                    initialZoom: 16,
+                  ),
+                  children: [
+                    TileLayer(
+                     // circles: [
+                      //   CircleMarker(
+                      //     point: const LatLng(51.5, -0.09),
+                      //     color: Colors.blue.withOpacity(0.7),
+                      //     borderColor: Colors.black,
+                      //     borderStrokeWidth: 2,
+                      //     useRadiusInMeter: true,
+                      //     radius: 2000, // 2000 meters
+                      //   ),
+                      //   CircleMarker(
+                      //     point: const LatLng(51.4937, -0.6638),
+                      //     // Dorney Lake is ~2km long
+                      //     color: Colors.green.withOpacity(0.9),
+                      //     borderColor: Colors.black,
+                      //     borderStrokeWidth: 2,
+                      //     useRadiusInMeter: true,
+                      //     radius: 1000, // 1000 meters
+                      //   ),
+                      // ],
+                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    ),
+                    MarkerLayer(
+                      markers: markers,
+                    ),
                     CircleLayer(
                       circles: [
                         CircleMarker(
@@ -88,88 +160,77 @@ class _LocationState extends State<Location> {
                           borderStrokeWidth: 1.5,
                         ),
                       ],
-                    );
-                  });
-                }
-            ),
-            const SizedBox(
-              height: 20.0,
-            ),
-            // ElevatedButton(
-            //   onPressed: () async {
-            //     _getCurrentLocation().then((value) {
-            //       lat = value.latitude;
-            //       long = value.longitude;
-            //       setState(() {
-            //         locationMessage = 'Latitude: $lat , Longitude: $long';
-            //       });
-            //       _liveLocation();
-            //       _openMap(lat.toString(), long.toString());
-            //     }
-            //     );
-            //   },
-            //   child: const Text('Open Map'),
-            // ),
-            Container(
-              height: 500,
-              color: Colors.black,
-              child:  FlutterMap(
-                mapController: mapController,
-                options: MapOptions(
-                  initialCenter: LatLng(lat, long),
-                  initialZoom: 16,
+                    ),
+                  ],
                 ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TileLayer(
-                   // circles: [
-                    //   CircleMarker(
-                    //     point: const LatLng(51.5, -0.09),
-                    //     color: Colors.blue.withOpacity(0.7),
-                    //     borderColor: Colors.black,
-                    //     borderStrokeWidth: 2,
-                    //     useRadiusInMeter: true,
-                    //     radius: 2000, // 2000 meters
-                    //   ),
-                    //   CircleMarker(
-                    //     point: const LatLng(51.4937, -0.6638),
-                    //     // Dorney Lake is ~2km long
-                    //     color: Colors.green.withOpacity(0.9),
-                    //     borderColor: Colors.black,
-                    //     borderStrokeWidth: 2,
-                    //     useRadiusInMeter: true,
-                    //     radius: 1000, // 1000 meters
-                    //   ),
-                    // ],
-                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  ),
-                  MarkerLayer(
-                    markers: markers,
-                  ),
-                  CircleLayer(
-                    circles: [
-                      CircleMarker(
-                        point: LatLng(lat, long),
-                        radius: selectedRadius,
-                        useRadiusInMeter: true,
-                        color: Colors.lightBlueAccent.withOpacity(0.3),
-                        borderColor: Colors.blue.withOpacity(0.65),
-                        borderStrokeWidth: 1.5,
-                      ),
-                    ],
-                  ),
+                 // Expanded(child:
+                    RadioListTile(
+                      title: Text("Learn"),
+                      value: "Learn",
+                      groupValue: selectedOption,
+                      onChanged: (String? value) {
+                        setState(() => selectedOption = value!);
+                      },
+                    ),
+                 // ),
+                 //  Expanded(
+                 //    child:
+                    RadioListTile(
+                      title: Text("Teach"),
+                      value: "Teach",
+                      groupValue: selectedOption,
+                      onChanged: (String? value) {
+                        setState(() => selectedOption = value!);
+                      },
+                    ),
+                 // ),
+                 //  Expanded(
+                 //    child:
+                    RadioListTile(
+                      title: Text("Exchange"),
+                      value: "Exchange",
+                      groupValue: selectedOption,
+                      onChanged: (String? value) {
+                        setState(() => selectedOption = value!);
+                      },
+                    ),
+                 // ),
+                 //  Expanded(
+                 //    child:
+                    RadioListTile(
+                      title: Text("Practice"),
+                      value: "Practice",
+                      groupValue: selectedOption,
+                      onChanged: (String? value) {
+                        setState(() => selectedOption = value!);
+                      },
+                    ),
+                 // ),
                 ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  //Navigator.pushNamed(context, ResultScreen.id);
-                },
-                child: const Text('Next'),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MatchedScreen(
+                          selectedOption: selectedOption,
+                          sliderValue: selectedRadius,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text('Next'),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
