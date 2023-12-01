@@ -11,17 +11,17 @@ late Size mq;
 
 var userId = FirebaseAuth.instance.currentUser?.uid;
 
-class UserProfile extends StatefulWidget {
+class UserProfileImage extends StatefulWidget {
   static String id = 'user_profile_screen';
-  const UserProfile({Key? key}) : super(key: key);
+  const UserProfileImage({Key? key}) : super(key: key);
 
 
   @override
-  State<UserProfile> createState() => _UserProfileState();
+  State<UserProfileImage> createState() => _UserProfileImageState();
 
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _UserProfileImageState extends State<UserProfileImage> {
   final _formKey = GlobalKey<FormState>();
   String? _image;
   File? _imageFile;

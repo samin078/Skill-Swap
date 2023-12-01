@@ -1,7 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:skill_swap/auth/screen/register_screen.dart';
-
 import '../auth/screen/login_screen.dart';
 import '../components/rounded_button.dart';
 

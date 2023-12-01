@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:skill_swap/profile/screens/user_profile_screen.dart';
 import 'package:skill_swap/skills/select_skill_mode.dart';
 import 'package:skill_swap/skills/skilled_in.dart';
 import '../api/apis.dart';
 import '../location/user_location.dart';
 import '../profile/screens/demo.dart';
+import '../profile_info/personal_information.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -30,12 +32,21 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => UserProfile()
+                      builder: (_) => UserProfileImage()
                   )
               );
             },
             child: Text(
               "PROFILE",
+            ),
+          ),
+          MaterialButton(
+            onPressed: (){
+              Navigator.pushNamed(context, PersonalInfoForm.id);
+              //Get.to(()=> PersonalInfoForm());
+            },
+            child: Text(
+              "INFO",
             ),
           ),
           MaterialButton(

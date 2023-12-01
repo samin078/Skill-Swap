@@ -80,6 +80,20 @@ class DatabaseMethods {
     }
   }
 
+
+  Future<Map<String, dynamic>> getUserFirstName(String userId) async {
+    try {
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('user_info')
+          .doc(userId)
+          .get();
+      return userSnapshot.data() as Map<String, dynamic>;
+    } catch (e) {
+      print('Error fetching user data: $e');
+      return {};
+    }
+  }
+
   Future<List<Map<String, dynamic>>?> getSelectedCategories(
       String userId) async {
     try {

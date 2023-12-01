@@ -30,10 +30,10 @@ class _LocationState extends State<Location> {
   late List<Marker> markers;
   double selectedRadius = 500;
   String selectedOption = "";
+  String radiusDisplay = "500m";
 
   @override
   void initState() {
-    // TODO: implement initState
     setState(() {
 
     });
@@ -47,15 +47,12 @@ class _LocationState extends State<Location> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("Map"),
-      //   centerTitle: true,
-      // ),
+
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             children: [
-              Text(locationMessage),
+              //Text(locationMessage),
               const SizedBox(
                 height: 30.0,
               ),
@@ -81,6 +78,8 @@ class _LocationState extends State<Location> {
                    // print(value);
                     print(selectedRadius);
                     setState(() {
+                      selectedRadius = value;
+                      radiusDisplay = "${value.toInt()}m";
                       CircleLayer(
                         circles: [
                           CircleMarker(
@@ -96,8 +95,9 @@ class _LocationState extends State<Location> {
                     });
                   }
               ),
-              const SizedBox(
-                height: 20.0,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: Text(radiusDisplay, style: TextStyle(fontSize: 16)),
               ),
               // ElevatedButton(
               //   onPressed: () async {
@@ -226,7 +226,16 @@ class _LocationState extends State<Location> {
                       ),
                     );
                   },
-                  child: const Text('Next'),
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Color.fromRGBO(0, 224, 150, 203), // Custom color
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  ),
                 ),
               ),
             ],

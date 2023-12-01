@@ -61,7 +61,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
           //     color: Colors.black54,
           //   ),
           // ),
-          title: Text(widget.user.name),
+          title: Text(widget.user.name!),
           subtitle: Text(
             widget.user.about!,
             maxLines: 1,

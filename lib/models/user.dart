@@ -1,13 +1,13 @@
 class Users {
 
   late String? image;
-  late final String phoneNo;
-  late final String occupation;
-  late final String gender;
-  late final String dateOfBirth;
-  late final String email;
-  late final String name;
-  late final String id;
+  late String? phoneNo;
+  late String? occupation;
+  late String? gender;
+  late String? dateOfBirth;
+  late String? email;
+  late String? name;
+  late String? id;
   late String? location;
   late String? nidNo;
   late String? about;
@@ -18,15 +18,20 @@ class Users {
   late String? lastActive;
   late String? pushToken;
 
+  late bool? isVerified;
+  late String? degree;
+  late String? fieldOfStudy;
+  late String? graduationYear;
+
   Users({
     this.image,
-    required this.phoneNo,
-    required this.occupation,
-    required this.gender,
-    required this.dateOfBirth,
-    required this.name,
-    required this.id,
-    required this.email,
+    this.phoneNo,
+    this.occupation,
+    this.gender,
+    this.dateOfBirth,
+    this.name,
+    this.id,
+    this.email,
     this.about,
     this.createdAt,
     this.institution,
@@ -36,6 +41,11 @@ class Users {
     this.lastActive,
     this.nidNo,
     this.pushToken,
+
+    this.isVerified,
+    this.degree,
+    this.fieldOfStudy,
+    this.graduationYear,
 
   });
 
@@ -59,6 +69,11 @@ class Users {
     nidNo = json['nid_no'] ?? '';
     pushToken = json['push_token'] ?? '';
     email = json['email'] ?? '';
+
+    isVerified = json['is_verified'] ?? '';
+    degree = json['degree'] ?? '';
+    fieldOfStudy = json['field_of_study'] ?? '';
+    graduationYear = json['graduation_year'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -80,6 +95,10 @@ class Users {
     data['nid_no'] = nidNo;
     data['push_token'] = pushToken;
     data['email'] = email;
+    data['is_verified'] = isVerified;
+    data['degree'] = degree;
+    data['field_of_study'] = fieldOfStudy;
+    data['graduation_year'] = graduationYear;
     return data;
   }
 }
@@ -87,21 +106,24 @@ class Users {
 class SocialLink {
   SocialLink({
     this.github,
-    this.linkedIn,
+    this.linkedIn, this.facebook,
   });
 
   late String? github;
   late String? linkedIn;
+  late String? facebook;
 
   SocialLink.fromJson(Map<String, dynamic> json){
     github = json['github'];
-    linkedIn = json['linked_in '];
+    linkedIn = json['linked_in'];
+    facebook = json['facebook'];
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['github'] = github;
-    data['linked_in '] = linkedIn;
+    data['linked_in'] = linkedIn;
+    data['facebook'] = linkedIn;
     return data;
   }
 }

@@ -5,6 +5,13 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:skill_swap/screens/home_screen.dart';
 import '../../components/rounded_button.dart';
 import '../../constants.dart';
+import '../../globals/Widgets/login_widgets/divider.dart';
+import '../../globals/Widgets/login_widgets/login_form.dart';
+import '../../globals/Widgets/login_widgets/login_header.dart';
+import '../../globals/Widgets/login_widgets/social_buttons.dart';
+import '../../helpers/helper_functions.dart';
+import '../../styles/spacing_styles.dart';
+import '../../utils/constants/sizes.dart';
 
 
 
@@ -23,84 +30,26 @@ class _LoginScreenState extends State<LoginScreen> {
   String password = '';
   bool showSpinner = false;
 
+
+
   @override
   Widget build(BuildContext context) {
+    final dark = NHelperFunctions.isDarkMode(context);
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: ModalProgressHUD(
-        inAsyncCall: showSpinner,
+      body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.0),
+          padding: NSpacingStyle.paddingWithAppBarHeight,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Flexible(
-                child: Hero(
-                  tag: 'logo',
-                  child: Container(
-                    height: 200.0,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Icon(
-                        Icons.swap_horizontal_circle_outlined,
-                        size: 170.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 48.0,
-              ),
-              TextField(
-                textAlign: TextAlign.center,
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (value) {
-                  email=value;
-                },
-                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
-              ),
-              SizedBox(
-                height: 8.0,
-              ),
-              TextField(
-                textAlign: TextAlign.center,
-                obscureText: true,
-                onChanged: (value) {
-                  password = value;
-                },
-                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
-              ),
-              SizedBox(
-                height: 24.0,
-              ),
-              RoundedButton(
-                title: 'Log In',
-                colour: Colors.lightBlueAccent,
-                onPressed: () async{
-                  setState(() {
-                    showSpinner = true;
-                  });
-                  try{
-                    final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
-                    if(user != null){
-                      Navigator.pushNamed(context, HomeScreen.id);
-                    }
-                    setState(() {
-                      showSpinner = false;
-                    });
-                  }
-                  catch (e) {
-                    Fluttertoast.showToast(
-                      msg: "$e",
-                    );
-                    setState(() {
-                      showSpinner = false;
-                    });
-                  }
-                },
-              ),
+            children: [
+              //logo,title and subtitle
+              NLoginHeader(dark: dark),
+              //form
+              NLoginForm(),
+              ///divider
+              NFormDivider(dark: dark, dividerText: "Or Sign In With",),
+              const SizedBox(height: NSizes.sm,),
+              ///footer
+              const NSocialButtons(),
             ],
           ),
         ),
